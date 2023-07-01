@@ -8,7 +8,7 @@ use AspectMock\Intercept\FunctionInjector;
 use AspectMock\Test as test;
 use PHPUnit\Framework\ExpectationFailedException;
 
-final class FunctionInjectorTest extends \Codeception\TestCase\Test
+final class FunctionInjectorTest extends \Codeception\Test\Unit
 {
     protected FunctionInjector $funcInjector;
 
@@ -34,7 +34,7 @@ final class FunctionInjectorTest extends \Codeception\TestCase\Test
     public function testReferencedParameterTemplate()
     {
         $php = $this->funcReferencedParameterInjector->getPHP();
-        verify($php)->stringContainsString("function preg_match(\$p0, \$p1, &\$p2=NULL, \$p3=NULL, \$p4=NULL)");
+        verify($php)->stringContainsString("function preg_match(string \$p0, string \$p1, &\$p2 = null, int \$p3 = 0, int \$p4 = 0)");
         verify($php)->stringContainsString("case 5: \$args = [\$p0, \$p1, &\$p2, \$p3, \$p4]; break;");
         verify($php)->stringContainsString("case 4: \$args = [\$p0, \$p1, &\$p2, \$p3]; break;");
         verify($php)->stringContainsString("case 3: \$args = [\$p0, \$p1, &\$p2]; break;");
@@ -108,6 +108,7 @@ final class FunctionInjectorTest extends \Codeception\TestCase\Test
 
     public function testReferencedParameter()
     {
+        test::clean();
         $func = test::func('\demo', 'preg_match', 10);
         verify(preg_match('@[0-9]+@', '1234', $match))->equals(10);
         test::clean();

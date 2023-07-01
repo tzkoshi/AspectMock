@@ -10,7 +10,6 @@ use Test\ns1\TestPhp7Class;
 
 final class testDoubleTest extends Unit
 {
-    use Codeception\Specify;
     use demo\WorkingTrait;
 
     protected function _tearDown()
@@ -27,10 +26,8 @@ final class testDoubleTest extends Unit
         UserModel::tableName();
         $user->verifyInvokedMultipleTimes('tableName',2);
 
-        $this->specify('disabling all methods', function() use ($user) {
-            test::methods($user, []);
-            verify(UserModel::tableName())->null();
-        });
+        test::methods($user, []);
+        verify(UserModel::tableName())->null();
     }
 
     public function testDoubleFullyQualifiedClass()
@@ -42,10 +39,8 @@ final class testDoubleTest extends Unit
         UserModel::tableName();
         $user->verifyInvokedMultipleTimes('tableName',2);
 
-        $this->specify('disabling all methods', function() use ($user) {
-            test::methods($user, []);
-            verify(UserModel::tableName())->null();
-        });
+        test::methods($user, []);
+        verify(UserModel::tableName())->null();
     }
 
     public function testDoubleObject()
@@ -55,13 +50,11 @@ final class testDoubleTest extends Unit
         $user->save();
         $user->verifyInvoked('save');
 
-        $this->specify('only selected methods can be added to instance', function() use ($user) {
-            $user = test::methods($user, ['setName']);
-            $user->setName('davert');
-            verify($user->getName())->notEquals('davert');
-            verify($user->getName())->null();
-            verify($user->getObject()->getName())->null();
-        });
+        $user = test::methods($user, ['setName']);
+        $user->setName('davert');
+        verify($user->getName())->notEquals('davert');
+        verify($user->getName())->null();
+        verify($user->getObject()->getName())->null();
     }
 
     public function testSpecUndefinedClass()
@@ -75,39 +68,27 @@ final class testDoubleTest extends Unit
         $this->any = $class->make();
         $this->any = $class->construct();
 
-        $this->specify('should return original class name', function() {
-            $this->assertStringContainsString('Undefined', (string)$this->any);
-            $this->assertStringContainsString('MyVirtualClass', (string)$this->any->__toString());
-        });
+        $this->assertStringContainsString('Undefined', (string)$this->any);
+        $this->assertStringContainsString('MyVirtualClass', (string)$this->any->__toString());
 
-        $this->specify('any method can be invoked', function() {
-           $this->assertInstanceOf('AspectMock\Proxy\Anything', $this->any->doSmth()->withTHis()->andThatsAll()->null());
-        });
+        $this->assertInstanceOf('AspectMock\Proxy\Anything', $this->any->doSmth()->withTHis()->andThatsAll()->null());
 
-        $this->specify('any property can be accessed', function() {
-            $this->any->that = 'xxx';
-           $this->assertInstanceOf('AspectMock\Proxy\Anything', $this->any->this->that->another);
-        });
+        $this->any->that = 'xxx';
+        $this->assertInstanceOf('AspectMock\Proxy\Anything', $this->any->this->that->another);
 
-        $this->specify('can be used as array', function() {
-            $this->any['has keys'];
-            unset($this->any['this']);
-            $this->any['this'] = 'that';
-            $this->assertFalse(isset($this->any['that']));
-            $this->assertInstanceOf('AspectMock\Proxy\Anything', $this->any['keys']);
-        });
+        $this->any['has keys'];
+        unset($this->any['this']);
+        $this->any['this'] = 'that';
+        $this->assertFalse(isset($this->any['that']));
+        $this->assertInstanceOf('AspectMock\Proxy\Anything', $this->any['keys']);
 
-        $this->specify('can be iterated', function() {
-            foreach ($this->any as $anything) {}
-        });
+        foreach ($this->any as $anything) {}
 
-        $this->specify('proxifies magic method calls', function() {
-            $any = test::double($this->any);
-            $any->callMeMaybe();
-            $any->name = 'hello world';
-            $this->assertInstanceOf('AspectMock\Proxy\Anything', $any->name);
-            verify($any->class->className)->equals('AspectMock\Proxy\Anything');
-        });
+        $any = test::double($this->any);
+        $any->callMeMaybe();
+        $any->name = 'hello world';
+        $this->assertInstanceOf('AspectMock\Proxy\Anything', $any->name);
+        verify($any->class->className)->equals('AspectMock\Proxy\Anything');
     }
 
     public function testCleanupSpecificClasses()
