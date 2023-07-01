@@ -64,7 +64,7 @@ EOF;
             throw new Exception('reflection api changed. adjust code.');
         }
 
-        if ($internal && $parameter->isOptional()) {
+        if ($internal && $parameter->isOptional() && !$parameter->isDefaultValueAvailable()) {
             $text .= "=NULL";
         }
 
@@ -136,4 +136,4 @@ EOF;
     {
         $this->template = str_replace(sprintf('{{%s}}', $var), $value, $this->template);
     }
-} 
+}
