@@ -4,13 +4,9 @@ namespace demo;
 
 use AspectMock\Proxy\ClassProxy;
 use AspectMock\Test as test;
-use Codeception\Specify;
 
-final class ClassProxyTest extends \Codeception\TestCase\Test
+final class ClassProxyTest extends \Codeception\Test\Unit
 {
-
-    use Specify;
-
     public function testSimpleClassValidations()
     {
         $class = test::double('demo\UserModel');
@@ -31,7 +27,6 @@ final class ClassProxyTest extends \Codeception\TestCase\Test
         /** @var $class ClassProxy **/
         verify($class->isDefined())->true();
         verify($class->hasMethod('setName'))->false();
-        verify($class->traits())->arrayContains('Codeception\Specify');
         verify($class->interfaces())->arrayContains('Iterator');
         verify($class->parent())->equals('stdClass');
     }
@@ -42,21 +37,22 @@ final class ClassProxyTest extends \Codeception\TestCase\Test
         test::double('MyUndefinedClass');
     }
 
-    public function testInstanceCreation()
+    public function testInstanceCreationFromProxyClass()
     {
         $this->class = test::double('demo\UserModel');
-
-        $this->specify('instance can be created from a class proxy', function() {
-            $user = $this->class->construct(['name' => 'davert']);
-            verify($user->getName())->equals('davert');
-            $this->assertInstanceOf('demo\UserModel', $user);
-        });
-
-        $this->specify('instance can be created without constructor', function() {
-            $user = $this->class->make();
-            $this->assertInstanceOf('demo\UserModel', $user);
-        });
+        $user = $this->class->construct(['name' => 'davert']);
+        verify($user->getName())->equals('davert');
+        $this->assertInstanceOf('demo\UserModel', $user);
     }
+
+    public function testInstanceCreationWithoutConstructor()
+    {
+        $this->class = test::double('demo\UserModel');
+        $user = $this->class->make();
+        $this->assertInstanceOf('demo\UserModel', $user);
+    }
+
+
 
     public function testClassWithTraits() {
         // if a trait is used by more than one doubled class, when BeforeMockTransformer
